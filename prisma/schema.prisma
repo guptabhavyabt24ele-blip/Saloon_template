@@ -1,0 +1,159 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Salon {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  email       String?
+  phone       String?
+  address     String?
+  timezone    String   @default("Asia/Kolkata")
+  currency    String   @default("INR")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  services    Service[]
+  staff       Staff[]
+  customers   Customer[]
+  appointments Appointment[]
+  gallery     GalleryImage[]
+  reviews     Review[]
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String?
+  email     String   @unique
+  password  String
+  role      String   @default("SALON_OWNER")
+  salonId   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Service {
+  id            String   @id @default(cuid())
+  salonId       String
+  name          String
+  slug          String
+  category      String
+  description   String
+  price         Int
+  duration      Int
+  active        Boolean  @default(true)
+  image         String?
+  salon         Salon    @relation(fields: [salonId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([salonId, slug])
+}
+
+model Staff {
+  id          String   @id @default(cuid())
+  salonId     String
+  name        String
+  role        String
+  photo       String?
+  specialties String[]
+  biography   String?
+  experience  String?
+  active      Boolean  @default(true)
+  salon       Salon    @relation(fields: [salonId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Customer {
+  id            String   @id @default(cuid())
+  salonId       String
+  name          String
+  phone         String?
+  email         String?
+  notes         String?
+  consent       Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  salon         Salon    @relation(fields: [salonId], references: [id])
+  appointments  Appointment[]
+}
+
+model Appointment {
+  id             String   @id @default(cuid())
+  salonId        String
+  customerId     String?
+  staffId        String?
+  serviceId      String?
+  bookingRef     String   @unique
+  startsAt       DateTime
+  endsAt         DateTime
+  status         String   @default("PENDING")
+  notes          String?
+  totalPrice     Int      @default(0)
+  deposit        Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  salon          Salon    @relation(fields: [salonId], references: [id])
+  customer       Customer? @relation(fields: [customerId], references: [id])
+}
+
+model GalleryImage {
+  id        String   @id @default(cuid())
+  salonId   String
+  title     String
+  category  String
+  imageUrl  String
+  createdAt DateTime @default(now())
+  salon     Salon    @relation(fields: [salonId], references: [id])
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  salonId   String
+  author    String
+  rating    Int
+  message   String
+  createdAt DateTime @default(now())
+  salon     Salon    @relation(fields: [salonId], references: [id])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  salonId   String
+  type      String
+  channel   String
+  recipient String
+  status    String   @default("PENDING")
+  createdAt DateTime @default(now())
+}
+
+model Payment {
+  id            String   @id @default(cuid())
+  salonId       String
+  appointmentId String?
+  amount        Int
+  method        String
+  status        String
+  reference     String   @unique
+  gatewayRef    String?
+  createdAt     DateTime @default(now())
+}
+
+model Promotion {
+  id          String   @id @default(cuid())
+  salonId     String
+  title       String
+  code        String?
+  discountPct Int?
+  discountAmt Int?
+  active      Boolean  @default(true)
+  startsAt    DateTime?
+  endsAt      DateTime?
+  createdAt   DateTime @default(now())
+}
