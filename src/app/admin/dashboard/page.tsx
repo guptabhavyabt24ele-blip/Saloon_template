@@ -66,7 +66,7 @@ export default async function AdminDashboardPage() {
   }
 
   return (
-    <main className="container-shell py-16">
+    <main className="container-shell pb-16 pt-28 md:pt-36">
       <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
           <p className="text-xs uppercase tracking-[0.25em] text-neutral-500">Dashboard</p>
@@ -84,7 +84,7 @@ export default async function AdminDashboardPage() {
           <div key={stat.label} className="card-surface p-5">
             <p className="text-sm text-neutral-500">{stat.label}</p>
             <div className="mt-4 flex items-end justify-between gap-3">
-              <p className="text-3xl font-semibold text-neutral-900">{stat.value}</p>
+              <p className="tabular-nums text-3xl font-semibold text-neutral-900">{stat.value}</p>
               <span className="text-xs font-medium text-emerald-600">{stat.change}</span>
             </div>
           </div>

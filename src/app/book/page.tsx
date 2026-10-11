@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowRight, CheckCircle2, Clock3, Sparkles } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Clock3 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { calculateBookingSummary, generateAvailableSlots } from '@/lib/booking';
@@ -97,15 +97,15 @@ export default function BookPage() {
   }
 
   return (
-    <main className="container-shell py-20">
+    <main className="page-shell">
       <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
           <p className="text-xs uppercase tracking-[0.25em] text-neutral-500">Book your appointment</p>
-          <h1 className="mt-3 font-serif text-5xl tracking-tight text-neutral-900">Choose your perfect salon ritual</h1>
+          <h1 className="mt-3 font-serif text-5xl tracking-tight text-neutral-900">Choose your perfect services</h1>
         </div>
-        <div className="flex items-center gap-2 rounded-full border border-stone-200 bg-white px-3 py-2 text-xs uppercase tracking-[0.22em] text-neutral-600">
-          <Sparkles className="h-3.5 w-3.5 text-amber-700" />
-          Step {step} of {totalSteps}
+        <div className="text-right text-[10px] font-medium uppercase tracking-editorial text-espresso">
+          <p className="tabular-nums">STEP {String(step).padStart(2, '0')} — {String(totalSteps).padStart(2, '0')}</p>
+          <p className="mt-1 text-ink">{['Services', 'Stylist', 'Time', 'Summary'][step - 1]}</p>
         </div>
       </div>
 
@@ -121,15 +121,15 @@ export default function BookPage() {
                     key={service.id}
                     type="button"
                     onClick={() => toggleService(service.id)}
-                    className={`card-surface flex w-full items-center gap-4 p-4 text-left ${isSelected ? 'border-neutral-900 ring-2 ring-neutral-200' : ''}`}
+                    className={`card-surface flex w-full items-center gap-4 p-4 text-left ${isSelected ? 'border-champagne ring-1 ring-champagne/40 ring-offset-2 ring-offset-bone' : ''}`}
                   >
                     <img src={service.image} alt={service.name} className="h-20 w-20 rounded-2xl object-cover" />
                     <div className="flex-1">
                       <div className="flex items-center justify-between gap-3">
                         <h2 className="text-xl font-semibold text-neutral-900">{service.name}</h2>
-                        <span className="font-medium text-neutral-900">₹{service.price}</span>
+                        <span className="tabular-nums font-medium text-ink">₹{service.price}</span>
                       </div>
-                      <p className="mt-1 text-sm text-neutral-600">{service.duration} minutes • {service.category}</p>
+                      <p className="mt-1 text-sm text-espresso"><span className="tabular-nums">{service.duration} minutes</span> • {service.category}</p>
                     </div>
                     <div className={`flex h-6 w-6 items-center justify-center rounded-full border ${isSelected ? 'border-neutral-900 bg-neutral-900 text-white' : 'border-stone-300 bg-white'}`}>
                       {isSelected ? <CheckCircle2 className="h-4 w-4" /> : null}
@@ -180,7 +180,7 @@ export default function BookPage() {
                       key={day.iso}
                       type="button"
                       onClick={() => setSelectedDate(day.iso)}
-                      className={`rounded-2xl border px-3 py-3 text-left ${selectedDate === day.iso ? 'border-neutral-900 bg-neutral-900 text-white' : 'border-stone-200 bg-stone-50 text-neutral-700'}`}
+                      className={`rounded-2xl border px-3 py-3 text-left ${selectedDate === day.iso ? 'border-champagne bg-champagne/10 text-ink ring-1 ring-champagne/40 ring-offset-2 ring-offset-bone' : 'border-warm-stone bg-bone/70 text-espresso'}`}
                     >
                       <p className="text-xs uppercase tracking-[0.2em]">{day.label}</p>
                     </button>
@@ -200,7 +200,7 @@ export default function BookPage() {
                         key={slot}
                         type="button"
                         onClick={() => setSelectedTime(slot)}
-                        className={`rounded-2xl border px-3 py-2 text-sm ${selectedTime === slot ? 'border-neutral-900 bg-neutral-900 text-white' : 'border-stone-200 bg-stone-50 text-neutral-700'}`}
+                        className={`rounded-2xl border px-3 py-2 text-sm ${selectedTime === slot ? 'border-champagne bg-champagne/10 text-ink ring-1 ring-champagne/40 ring-offset-2 ring-offset-bone' : 'border-warm-stone bg-bone/70 text-espresso'}`}
                       >
                         {slot}
                       </button>
@@ -250,16 +250,26 @@ export default function BookPage() {
           )}
         </div>
 
-        <aside className="card-surface h-fit p-6">
+        <aside className="card-surface sticky top-24 h-fit p-6">
           <h2 className="font-serif text-3xl text-neutral-900">Booking summary</h2>
           <div className="mt-6 space-y-5 text-sm text-neutral-600">
             <div className="flex items-center justify-between"><span>Services</span><span className="max-w-[55%] text-right font-medium text-neutral-900">{selectedServices.map((service) => service.name).join(', ') || 'No service selected'}</span></div>
             <div className="flex items-center justify-between"><span>Stylist</span><span className="font-medium text-neutral-900">{selectedStylist.name}</span></div>
             <div className="flex items-center justify-between"><span>Date</span><span className="font-medium text-neutral-900">{nextSevenDays.find((day) => day.iso === selectedDate)?.label ?? selectedDate}</span></div>
             <div className="flex items-center justify-between"><span>Time</span><span className="font-medium text-neutral-900">{selectedTime}</span></div>
-            <div className="flex items-center justify-between"><span>Duration</span><span className="font-medium text-neutral-900">{bookingSummary.totalDurationMinutes} min</span></div>
-            <div className="flex items-center justify-between"><span>Deposit</span><span className="font-medium text-neutral-900">₹{bookingSummary.deposit.toLocaleString('en-IN')}</span></div>
-            <div className="flex items-center justify-between border-t border-stone-200 pt-3 text-base font-semibold text-neutral-900"><span>Total</span><span>₹{bookingSummary.totalPrice.toLocaleString('en-IN')}</span></div>
+            <div className="flex items-center justify-between"><span>Duration</span><span className="tabular-nums font-medium text-ink">{bookingSummary.totalDurationMinutes} min</span></div>
+            <div className="flex items-center justify-between"><span>Deposit</span><span className="tabular-nums font-medium text-ink">₹{bookingSummary.deposit.toLocaleString('en-IN')}</span></div>
+            <div className="flex items-center justify-between border-t border-warm-stone pt-3 text-base font-semibold text-ink"><span>Total</span><span className="tabular-nums">₹{bookingSummary.totalPrice.toLocaleString('en-IN')}</span></div>
+            {step === 1 ? (
+              <button
+                type="button"
+                onClick={goNext}
+                disabled={selectedServices.length === 0}
+                className="mt-6 w-full cursor-pointer rounded-full bg-[#1A1918] py-3.5 text-xs font-medium uppercase tracking-widest text-[#F8F6F0] transition-colors duration-200 ease-out hover:bg-[#2A2928] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Continue to Stylist
+              </button>
+            ) : null}
           </div>
         </aside>
       </div>

@@ -1,91 +1,76 @@
 import Link from 'next/link';
-import { ArrowRight, CalendarDays, MapPin, Phone, Sparkles, Star, Clock3 } from 'lucide-react';
+import { ArrowRight, CalendarDays, MapPin, Phone, Clock3 } from 'lucide-react';
+import { HomeHeroMotion } from '@/components/home/home-hero-motion';
 import { galleryItems, services, stylists } from '@/lib/data';
 import { homeAnnouncements, salonConfig } from '@/lib/salon-config';
 
 export default function HomePage() {
-  const featuredServices = services.filter((service) => service.featured).slice(0, 3);
+  const featuredServices = services.slice(0, 3);
+  const enabledAnnouncements = homeAnnouncements.filter((item) => item.enabled);
+  const announcementText = enabledAnnouncements.map((item) => item.text).join(' • ');
 
   return (
     <main>
-      <div className="border-b border-stone-200 bg-stone-100/80">
-        <div className="container-shell flex min-h-[42px] items-center justify-between py-2 text-xs uppercase tracking-[0.2em] text-neutral-700">
-          <div className="flex items-center gap-2">
-            <Sparkles className="h-3.5 w-3.5 text-amber-700" />
-            {homeAnnouncements.filter((item) => item.enabled).map((item) => item.text).join(' • ')}
-          </div>
-          <div className="hidden items-center gap-2 md:flex">
-            <Clock3 className="h-3.5 w-3.5" />
+      <div className="overflow-hidden border-b border-warm-stone bg-bone pt-[72px] text-[10px] uppercase tracking-editorial text-espresso">
+        <div className="announcement-track container-shell flex min-h-[34px] items-center gap-8 whitespace-nowrap py-2">
+          <span className="inline-flex items-center gap-2">
+            <span className="h-px w-5 bg-champagne" aria-hidden="true" />
+            {announcementText}
+          </span>
+          <span className="hidden items-center gap-2 md:inline-flex">
+            <Clock3 className="h-3 w-3 text-champagne" aria-hidden="true" />
             Tue-Sat: 10:00 AM - 9:00 PM
-          </div>
+          </span>
         </div>
       </div>
 
-      <header className="sticky top-0 z-40 border-b border-stone-200 bg-stone-50/80 backdrop-blur-md">
-        <div className="container-shell flex items-center justify-between py-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-neutral-900 text-sm font-semibold text-white">V</div>
-            <div>
-              <p className="font-serif text-xl tracking-tight">VELORA</p>
-              <p className="text-[10px] uppercase tracking-[0.22em] text-neutral-500">Salon Studio</p>
-            </div>
+      <HomeHeroMotion
+        eyebrow={<p className="mb-5 inline-flex rounded-full border border-warm-stone bg-white/70 px-3 py-1 text-[10px] uppercase tracking-editorial text-espresso">Luxury hair & beauty studio</p>}
+        headline={<h1 className="max-w-xl text-5xl leading-[1.1] tracking-tight text-ink sm:text-6xl">Crafted looks for an elevated every day.</h1>}
+        description={<p className="mt-6 max-w-lg text-lg leading-8 text-espresso">Discover precision haircuts, dimensional colour, bridal styling, and restorative rituals designed around your lifestyle.</p>}
+        actions={
+          <div className="mt-8 flex flex-wrap gap-4">
+            <Link href="/book" className="group btn-primary active:translate-y-0">
+              Book a styling session
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-200 ease-out group-hover:translate-x-1" aria-hidden="true" />
+            </Link>
+            <Link href="/gallery" className="group btn-secondary cursor-pointer active:translate-y-0">
+              View gallery
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-200 ease-out group-hover:translate-x-1" aria-hidden="true" />
+            </Link>
           </div>
-
-          <nav className="hidden items-center gap-8 text-sm text-neutral-700 md:flex">
-            <Link href="/services">Services</Link>
-            <Link href="/gallery">Gallery</Link>
-            <Link href="/team">Our Team</Link>
-            <Link href="/about">About</Link>
-            <Link href="/contact">Contact</Link>
-          </nav>
-
-          <div className="flex items-center gap-3">
-            <Link href="/book" className="btn-primary">Book Appointment</Link>
+        }
+        proof={
+          <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-espresso">
+            <div className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-champagne" aria-hidden="true" /> <span className="tabular-nums">4.9</span> guest rating</div>
+            <div className="flex items-center gap-2"><CalendarDays className="h-4 w-4 text-champagne" aria-hidden="true" /> <span className="tabular-nums">2,300+</span> appointments</div>
           </div>
-        </div>
-      </header>
-
-      <section className="relative overflow-hidden border-b border-stone-200 bg-stone-100">
-        <div className="container-shell grid items-center gap-10 py-16 md:grid-cols-2 lg:py-24">
-          <div>
-            <p className="mb-5 inline-flex rounded-full border border-stone-200 bg-white px-3 py-1 text-[10px] uppercase tracking-[0.32em] text-neutral-600">Luxury hair & beauty studio</p>
-            <h1 className="max-w-xl text-5xl leading-none tracking-[-0.05em] text-neutral-900 sm:text-6xl">
-              Crafted looks for an elevated every day.
-            </h1>
-            <p className="mt-6 max-w-lg text-lg leading-8 text-neutral-600">
-              Discover precision haircuts, dimensional colour, bridal styling, and restorative rituals designed around your lifestyle.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-4">
-              <Link href="/book" className="btn-primary">Book a styling session <ArrowRight className="ml-2 h-4 w-4" /></Link>
-              <Link href="/gallery" className="btn-secondary">View gallery</Link>
+        }
+        visual={
+          <div className="relative mx-auto w-full max-w-[600px]">
+            <div className="overflow-hidden rounded-[18px] border border-warm-stone bg-warm-stone/30 p-1 shadow-[0_18px_45px_rgba(107,104,100,0.16)]">
+              <div className="group overflow-hidden rounded-[14px] bg-white">
+                <img
+                  src="https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?auto=format&fit=crop&w=1200&q=80"
+                  alt="Salon styling session"
+                  className="aspect-[4/5] w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                />
+              </div>
             </div>
-            <div className="mt-10 flex items-center gap-6 text-sm text-neutral-600">
-              <div className="flex items-center gap-2"><Star className="h-4 w-4 fill-amber-500 text-amber-500" /> 4.9 guest rating</div>
-              <div className="flex items-center gap-2"><CalendarDays className="h-4 w-4" /> 2,300+ appointments</div>
-            </div>
-          </div>
-          <div className="relative">
-            <div className="card-surface overflow-hidden">
-              <img
-                src="https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?auto=format&fit=crop&w=1200&q=80"
-                alt="Salon styling session"
-                className="h-[620px] w-full object-cover"
-              />
-            </div>
-            <div className="absolute -bottom-8 left-8 rounded-2xl border border-stone-200 bg-white/90 p-4 shadow-lg backdrop-blur-sm">
+            <div className="absolute -bottom-5 left-5 rounded-[14px] border border-warm-stone bg-bone/95 p-3 shadow-[0_12px_28px_rgba(107,104,100,0.14)] sm:left-8">
               <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-stone-900 text-white">
-                  <Sparkles className="h-5 w-5" />
-                </div>
+                <span className="relative flex h-9 w-9 items-center justify-center rounded-full bg-ink text-bone">
+                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" aria-hidden="true" />
+                </span>
                 <div>
-                  <p className="text-xs uppercase tracking-[0.2em] text-neutral-500">Signature tone</p>
-                  <p className="font-serif text-xl">Luxury colour artistry</p>
+                  <p className="text-[10px] uppercase tracking-editorial text-espresso">Studio open today</p>
+                  <p className="font-serif text-lg leading-tight text-ink">By appointment</p>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        }
+      />
 
       <section className="py-16">
         <div className="container-shell">
@@ -104,13 +89,15 @@ export default function HomePage() {
                 <div className="p-6">
                   <div className="mb-4 flex items-center justify-between gap-3">
                     <span className="rounded-full bg-stone-100 px-2.5 py-1 text-[10px] uppercase tracking-[0.2em] text-neutral-600">{service.category}</span>
-                    <span className="font-medium text-neutral-900">₹{service.price}</span>
+                    <span className="font-medium tabular-nums text-ink">₹{service.price}</span>
                   </div>
                   <h3 className="text-2xl font-semibold text-neutral-900">{service.name}</h3>
                   <p className="mt-3 text-sm leading-6 text-neutral-600">{service.description}</p>
                   <div className="mt-5 flex items-center justify-between text-sm text-neutral-600">
-                    <span>{service.duration} min</span>
-                    <Link href={`/services/${service.slug}`} className="inline-flex items-center gap-2 font-medium text-neutral-900">Book now <ArrowRight className="h-4 w-4" /></Link>
+                    <span className="tabular-nums">{service.duration} min</span>
+                    <Link href={`/services/${service.slug}`} className="group inline-flex cursor-pointer items-center gap-2 font-medium text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-champagne focus-visible:ring-offset-2">
+                      Book Service <span className="transition-transform duration-200 ease-out group-hover:translate-x-1" aria-hidden="true"><ArrowRight className="h-4 w-4" /></span>
+                    </Link>
                   </div>
                 </div>
               </article>
@@ -126,7 +113,7 @@ export default function HomePage() {
             <h2 className="mt-3 text-4xl tracking-tight">Curated looks that feel personal.</h2>
           </div>
           <div className="flex items-end justify-end">
-            <Link href="/gallery" className="inline-flex items-center gap-2 text-sm uppercase tracking-[0.2em] text-stone-200">View portfolio <ArrowRight className="h-4 w-4" /></Link>
+            <Link href="/gallery" className="group inline-flex cursor-pointer items-center gap-2 rounded-full border border-stone-300/60 bg-transparent px-5 py-2.5 text-sm uppercase tracking-[0.2em] text-stone-200 transition-all duration-200 ease-out hover:border-stone-200 hover:bg-stone-200/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-champagne focus-visible:ring-offset-2 focus-visible:ring-offset-[#1d1a18]">View portfolio <span className="transition-transform duration-200 ease-out group-hover:translate-x-1" aria-hidden="true"><ArrowRight className="h-4 w-4" /></span></Link>
           </div>
         </div>
         <div className="container-shell mt-8 grid gap-6 md:grid-cols-4">
@@ -184,7 +171,7 @@ export default function HomePage() {
               <Link href="/contact" className="btn-secondary">Contact us</Link>
             </div>
           </div>
-          <div className="card-surface overflow-hidden border-stone-200 bg-white p-3">
+          <div className="overflow-hidden rounded-[14px] border border-warm-stone/60 bg-white/40 p-3">
             <iframe
               title="Velora salon map"
               src={salonConfig.mapsUrl}

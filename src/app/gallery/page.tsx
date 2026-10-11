@@ -2,7 +2,7 @@ import { galleryItems } from '@/lib/data';
 
 export default function GalleryPage() {
   return (
-    <main className="container-shell py-20">
+    <main className="page-shell">
       <div className="mb-10">
         <p className="text-xs uppercase tracking-[0.25em] text-neutral-500">Salon gallery</p>
         <h1 className="mt-3 font-serif text-5xl tracking-tight text-neutral-900">Inspired by texture, tone, and artistry</h1>
