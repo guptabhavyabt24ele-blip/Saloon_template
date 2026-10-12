@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { CalendarDays, ChevronRight, CircleUserRound, ClipboardList, Gauge, Inbox, Menu, Scissors, Settings, Sparkles, Users, X } from 'lucide-react';
 
 const navItems = [
@@ -39,7 +39,7 @@ export function AdminSidebar({ onNavigate }: { onNavigate?: () => void }) {
 
 export function AdminShell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
-  return <div className="min-h-screen bg-bone text-ink"><div className="fixed inset-y-0 left-0 z-40 hidden lg:block"><AdminSidebar /></div><div className="lg:pl-64"><header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-warm-stone/70 bg-bone/90 px-4 backdrop-blur md:px-8 lg:hidden"><Link href="/admin" className="font-serif text-xl">Velora <span className="font-sans text-[9px] uppercase tracking-[0.25em] text-espresso">Admin</span></Link><button type="button" onClick={() => setOpen(true)} aria-label="Open admin navigation" className="rounded-full border border-warm-stone p-2 text-ink"><Menu size={18} /></button></header><main className="min-h-[calc(100vh-4rem)]">{children}</main></div>{open ? <div className="fixed inset-0 z-50 lg:hidden"><button type="button" onClick={() => setOpen(false)} aria-label="Close admin navigation" className="absolute inset-0 bg-ink/55" /><div className="relative h-full w-[min(20rem,88vw)] shadow-2xl"><button type="button" onClick={() => setOpen(false)} aria-label="Close admin navigation" className="absolute right-4 top-4 z-10 rounded-full p-2 text-bone/70 hover:text-bone"><X size={18} /></button><AdminSidebar onNavigate={() => setOpen(false)} /></div></div> : null}</div>;
+  return <div className="min-h-screen bg-bone text-ink"><div className="fixed inset-y-0 left-0 z-40 hidden lg:block"><AdminSidebar /></div><div className="lg:pl-64"><header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-warm-stone/70 bg-bone/90 px-4 backdrop-blur md:px-8 lg:hidden"><Link href="/admin" className="font-serif text-xl">Velora <span className="font-sans text-[9px] uppercase tracking-[0.25em] text-espresso">Admin</span></Link><button type="button" onClick={() => setOpen(true)} aria-label="Open admin navigation" className="min-h-11 min-w-11 rounded-full border border-warm-stone p-2 text-ink"><Menu size={18} /></button></header><main className="min-h-[calc(100vh-4rem)]">{children}</main></div>{open ? <div className="fixed inset-0 z-50 lg:hidden"><button type="button" onClick={() => setOpen(false)} aria-label="Close admin navigation" className="absolute inset-0 bg-ink/55" /><div className="relative h-full w-[min(20rem,88vw)] shadow-2xl"><button type="button" onClick={() => setOpen(false)} aria-label="Close admin navigation" className="absolute right-4 top-4 z-10 min-h-11 min-w-11 rounded-full p-2 text-bone/70 hover:text-bone"><X size={18} /></button><AdminSidebar onNavigate={() => setOpen(false)} /></div></div> : null}</div>;
 }
 
 export function AdminPageHeader({ eyebrow, title, description, action }: { eyebrow: string; title: string; description?: string; action?: ReactNode }) {
@@ -47,10 +47,29 @@ export function AdminPageHeader({ eyebrow, title, description, action }: { eyebr
 }
 
 export function StatusBadge({ status }: { status: string }) {
-  const tone = { confirmed: 'bg-emerald-50 text-emerald-700', pending: 'bg-amber-50 text-amber-700', completed: 'bg-stone-200 text-stone-700', cancelled: 'bg-red-50 text-red-700', unread: 'bg-champagne/15 text-[#806536]', read: 'bg-stone-100 text-espresso' }[status] ?? 'bg-stone-100 text-espresso';
+  const tone = { confirmed: 'bg-emerald-50 text-emerald-700', pending: 'bg-amber-50 text-amber-700', completed: 'bg-stone-200 text-stone-700', cancelled: 'bg-red-50 text-red-700', unread: 'bg-champagne/15 text-[#806536]', read: 'bg-stone-100 text-espresso', archived: 'bg-stone-100 text-espresso' }[status] ?? 'bg-stone-100 text-espresso';
   return <span className={`inline-flex rounded-full px-2.5 py-1 text-[10px] font-medium capitalize tracking-wide ${tone}`}>{status}</span>;
 }
 
 export function EmptyState({ title, description }: { title: string; description: string }) {
   return <div role="status" className="border border-dashed border-warm-stone px-6 py-14 text-center"><p className="font-serif text-2xl text-ink">{title}</p><p className="mx-auto mt-2 max-w-md text-sm leading-6 text-espresso">{description}</p></div>;
 }
+
+export function AdminDialog({ title, description, onClose, children }: { title: string; description?: string; onClose: () => void; children: ReactNode }) {
+  const closeRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    closeRef.current?.focus();
+    const handleKeyDown = (event: KeyboardEvent) => { if (event.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', handleKeyDown);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.removeEventListener('keydown', handleKeyDown); document.body.style.overflow = previousOverflow; };
+  }, [onClose]);
+  return <div className="fixed inset-0 z-[60] flex items-end justify-center bg-ink/55 p-0 sm:items-center sm:p-6" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}><section role="dialog" aria-modal="true" aria-labelledby="admin-dialog-title" className="max-h-[92vh] w-full max-w-xl overflow-y-auto rounded-t-[24px] border border-warm-stone bg-bone p-6 shadow-[0_24px_80px_rgba(26,25,24,0.18)] sm:rounded-[20px]" data-lenis-prevent><div className="flex items-start justify-between gap-5"><div><h2 id="admin-dialog-title" className="font-serif text-3xl text-ink">{title}</h2>{description ? <p className="mt-2 text-sm leading-6 text-espresso">{description}</p> : null}</div><button ref={closeRef} type="button" onClick={onClose} aria-label="Close dialog" className="min-h-11 min-w-11 rounded-full border border-warm-stone p-2 text-espresso transition-colors hover:border-ink hover:text-ink"><X size={18} /></button></div><div className="mt-6">{children}</div></section></div>;
+}
+
+export function AdminField({ label, children, hint }: { label: string; children: ReactNode; hint?: string }) {
+  return <label className="block text-sm text-ink"><span className="block font-medium">{label}</span>{children}{hint ? <span className="mt-1 block text-xs text-espresso">{hint}</span> : null}</label>;
+}
+
+export const adminInputClass = 'mt-2 w-full border border-warm-stone bg-white/50 px-3 py-3 text-sm outline-none transition-colors focus:border-champagne focus:ring-1 focus:ring-champagne';

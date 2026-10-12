@@ -11,7 +11,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const isAdmin = pathname === '/admin' || pathname.startsWith('/admin/');
 
   if (isAdmin) {
-    return <AppSessionProvider>{children}</AppSessionProvider>;
+    if (pathname === '/admin/login') {
+      return <AppSessionProvider>{children}</AppSessionProvider>;
+    }
+
+    return (
+      <SmoothScrollProvider>
+        <AppSessionProvider>{children}</AppSessionProvider>
+      </SmoothScrollProvider>
+    );
   }
 
   return (

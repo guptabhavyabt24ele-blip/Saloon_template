@@ -7,7 +7,7 @@ import { FormEvent, Suspense, useState } from 'react';
 function AdminLoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl') ?? '/admin/dashboard';
+  const callbackUrl = searchParams.get('callbackUrl') ?? '/admin';
   const [email, setEmail] = useState('admin@velora.example');
   const [password, setPassword] = useState('change-me-in-production');
   const [error, setError] = useState('');
@@ -36,35 +36,35 @@ function AdminLoginForm() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-stone-100 px-6">
-      <div className="w-full max-w-md rounded-[30px] border border-stone-200 bg-white p-8 shadow-[0_20px_60px_rgba(16,17,16,0.08)]">
-        <p className="text-xs uppercase tracking-[0.25em] text-neutral-500">Salon access</p>
-        <h1 className="mt-4 font-serif text-4xl text-neutral-900">Admin login</h1>
+    <main className="flex min-h-screen items-center justify-center bg-bone px-6">
+      <div className="card-surface w-full max-w-md p-8">
+        <p className="text-xs uppercase tracking-[0.25em] text-espresso">Salon access</p>
+        <h1 className="mt-4 font-serif text-4xl text-ink">Admin login</h1>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-5">
           <div>
-            <label className="mb-2 block text-sm text-neutral-700">Email</label>
+            <label className="mb-2 block text-sm text-espresso">Email</label>
             <input
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               placeholder="admin@velora.example"
-              className="w-full rounded-full border border-stone-300 bg-stone-50 px-4 py-3 outline-none focus:border-neutral-500"
+              className="w-full rounded-full border border-warm-stone bg-white/50 px-4 py-3 text-ink outline-none transition-colors focus:border-champagne focus:ring-1 focus:ring-champagne"
             />
           </div>
           <div>
-            <label className="mb-2 block text-sm text-neutral-700">Password</label>
+            <label className="mb-2 block text-sm text-espresso">Password</label>
             <input
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               placeholder="••••••••"
-              className="w-full rounded-full border border-stone-300 bg-stone-50 px-4 py-3 outline-none focus:border-neutral-500"
+              className="w-full rounded-full border border-warm-stone bg-white/50 px-4 py-3 text-ink outline-none transition-colors focus:border-champagne focus:ring-1 focus:ring-champagne"
             />
           </div>
 
           {error ? (
-            <p className="rounded-full border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>
+            <p role="alert" className="border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>
           ) : null}
 
           <button type="submit" disabled={isSubmitting} className="btn-primary w-full disabled:cursor-not-allowed disabled:opacity-70">
@@ -78,7 +78,7 @@ function AdminLoginForm() {
 
 export default function AdminLoginPage() {
   return (
-    <Suspense fallback={<main className="flex min-h-screen items-center justify-center bg-stone-100 px-6"><div className="w-full max-w-md rounded-[30px] border border-stone-200 bg-white p-8 shadow-[0_20px_60px_rgba(16,17,16,0.08)]"><p className="text-sm text-neutral-600">Loading admin access...</p></div></main>}>
+    <Suspense fallback={<main className="flex min-h-screen items-center justify-center bg-bone px-6"><div className="card-surface w-full max-w-md p-8"><p className="text-sm text-espresso">Loading admin access...</p></div></main>}>
       <AdminLoginForm />
     </Suspense>
   );
