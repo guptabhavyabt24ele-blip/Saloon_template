@@ -1,6 +1,6 @@
 export default function PrivacyPage() {
   return (
-    <main className="container-shell py-20">
+    <main className="page-shell">
       <h1 className="font-serif text-5xl tracking-tight text-neutral-900">Privacy policy</h1>
       <div className="mt-8 max-w-3xl space-y-5 text-neutral-700">
         <p>We collect only the information required to deliver your salon appointment and service history.</p>

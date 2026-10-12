@@ -8,3 +8,7 @@ npm-debug.log*
 .DS_Store
 coverage
 prisma/*.db
+task.md 
+supabase/ 
+.claude 
+

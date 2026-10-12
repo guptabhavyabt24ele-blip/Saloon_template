@@ -6,7 +6,7 @@ const reviews = [
 
 export default function ReviewsPage() {
   return (
-    <main className="container-shell py-20">
+    <main className="page-shell">
       <div className="mb-10">
         <p className="text-xs uppercase tracking-[0.25em] text-neutral-500">Client feedback</p>
         <h1 className="mt-3 font-serif text-5xl tracking-tight text-neutral-900">Recent reviews</h1>
@@ -14,7 +14,7 @@ export default function ReviewsPage() {
       <div className="grid gap-6 md:grid-cols-3">
         {reviews.map((review) => (
           <div key={review.name} className="card-surface p-8">
-            <div className="mb-4 text-amber-500">{'★'.repeat(review.rating)}</div>
+            <div className="mb-4 text-xs uppercase tracking-editorial text-champagne">Rating <span className="tabular-nums">{review.rating}/5</span></div>
             <p className="text-lg leading-8 text-neutral-700">“{review.quote}”</p>
             <p className="mt-5 text-sm uppercase tracking-[0.24em] text-neutral-500">{review.name}</p>
           </div>

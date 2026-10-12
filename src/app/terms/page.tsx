@@ -1,6 +1,6 @@
 export default function TermsPage() {
   return (
-    <main className="container-shell py-20">
+    <main className="page-shell">
       <h1 className="font-serif text-5xl tracking-tight text-neutral-900">Terms & conditions</h1>
       <div className="mt-8 max-w-3xl space-y-5 text-neutral-700">
         <p>Appointments are confirmed subject to availability and may be adjusted by salon staff according to treatment length and stylist schedule.</p>

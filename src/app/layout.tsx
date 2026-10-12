@@ -1,7 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { Inter, Playfair_Display } from 'next/font/google';
-import { AppSessionProvider } from '@/components/providers/session-provider';
+import { AppShell } from '@/components/providers/app-shell';
 import { salonConfig } from '@/lib/salon-config';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
@@ -16,8 +16,8 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${playfair.variable} bg-stone-50 text-neutral-900 antialiased`}>
-        <AppSessionProvider>{children}</AppSessionProvider>
+      <body className={`${inter.variable} ${playfair.variable} bg-bone text-ink antialiased`}>
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );

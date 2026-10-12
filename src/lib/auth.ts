@@ -1,18 +1,14 @@
-import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { compare } from 'bcryptjs';
 import { getServerSession, type NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { prisma } from '@/lib/prisma';
+
+const configuredEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+const configuredPassword = process.env.ADMIN_PASSWORD;
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
-  session: {
-    strategy: 'jwt'
-  },
-  pages: {
-    signIn: '/admin/login'
-  },
-  secret: process.env.NEXTAUTH_SECRET ?? 'velora-admin-secret',
+  session: { strategy: 'jwt' },
+  pages: { signIn: '/admin/login' },
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -24,41 +20,25 @@ export const authOptions: NextAuthOptions = {
         const email = credentials?.email?.trim().toLowerCase();
         const password = credentials?.password;
 
-        if (!email || !password) {
+        if (!email || !password || !configuredEmail || !configuredPassword || email !== configuredEmail) {
           return null;
         }
 
-        const user = await prisma.user.findUnique({
-          where: {
-            email
-          }
-        });
+        const validPassword = configuredPassword.startsWith('$2')
+          ? await compare(password, configuredPassword)
+          : password === configuredPassword;
 
-        if (!user) {
+        if (!validPassword) {
           return null;
         }
 
-        const isValid = await compare(password, user.password);
-
-        if (!isValid) {
-          return null;
-        }
-
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name ?? 'Salon Owner',
-          role: user.role
-        };
+        return { id: email, email, name: 'Salon Owner', role: 'SALON_OWNER' };
       }
     })
   ],
   callbacks: {
     async jwt({ token, user }) {
-      if (user) {
-        token.role = (user as { role?: string }).role ?? 'SALON_OWNER';
-      }
-
+      if (user) token.role = (user as { role?: string }).role ?? 'SALON_OWNER';
       return token;
     },
     async session({ session, token }) {
@@ -66,12 +46,17 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.sub ?? session.user.id ?? '';
         session.user.role = (token.role as string | undefined) ?? 'SALON_OWNER';
       }
-
       return session;
     }
   }
 };
 
-export function getAuthSession() {
+export async function getAuthSession() {
   return getServerSession(authOptions);
+}
+
+export async function requireAdminSession() {
+  const session = await getAuthSession();
+  if (!session?.user || session.user.role !== 'SALON_OWNER') return null;
+  return session;
 }
