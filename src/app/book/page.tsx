@@ -81,19 +81,43 @@ export default function BookPage() {
     setStep((current) => Math.min(current + 1, totalSteps));
   }
 
-  function handleConfirm() {
-    const reference = `VELORA-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
-    const params = new URLSearchParams({
-      reference,
-      service: selectedServices.map((service) => service.name).join(', '),
-      stylist: selectedStylist.name,
-      date: nextSevenDays.find((day) => day.iso === selectedDate)?.label ?? selectedDate,
-      time: selectedTime,
-      amount: `₹${bookingSummary.totalPrice.toLocaleString('en-IN')}`
-    });
-
-    router.push(`/booking/confirmation?${params.toString()}`);
+  async function handleConfirm() {
+    setIsSubmitting(true);
+    setSubmitError('');
+    try {
+      const response = await fetch('/api/book', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          service: selectedServices[0]?.slug,
+          stylistId: selectedStylistId,
+          date: selectedDate,
+          time: selectedTime,
+          name: customerName,
+          phone: customerPhone,
+          email: customerEmail,
+          note: notes
+        })
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error ?? 'Booking could not be completed.');
+      const params = new URLSearchParams({
+        reference: result.bookingRef,
+        service: selectedServices.map((service) => service.name).join(', '),
+        stylist: selectedStylist.name,
+        date: nextSevenDays.find((day) => day.iso === selectedDate)?.label ?? selectedDate,
+        time: selectedTime,
+        amount: `₹${bookingSummary.totalPrice.toLocaleString('en-IN')}`
+      });
+      router.push(`/booking/confirmation?${params.toString()}`);
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : 'Booking could not be completed.');
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -242,9 +266,10 @@ export default function BookPage() {
                 </div>
               </div>
 
+              {submitError ? <p className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">{submitError}</p> : null}
               <div className="flex justify-between gap-3">
-                <button type="button" onClick={() => setStep(3)} className="btn-secondary">Back</button>
-                <button type="button" onClick={handleConfirm} className="btn-primary">Confirm booking</button>
+                <button type="button" onClick={() => setStep(3)} className="btn-secondary" disabled={isSubmitting}>Back</button>
+                <button type="button" onClick={handleConfirm} className="btn-primary" disabled={isSubmitting}>{isSubmitting ? 'Creating booking…' : 'Confirm booking'}</button>
               </div>
             </section>
           )}

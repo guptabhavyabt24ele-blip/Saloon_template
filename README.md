@@ -1,46 +1,38 @@
-# saloon_template
+# Velora Salon Studio
 
-A premium salon booking and management website built with Next.js, TypeScript, Tailwind CSS, Prisma, and Vitest.
+Luxury salon booking and atelier operations workspace built with Next.js, TypeScript, Tailwind CSS, Supabase, and Vitest.
 
-This repository contains a polished salon landing page, appointment booking flow, demo data, and a salon-owner dashboard foundation.
+## Features
 
-## Features included
-
-- Premium public salon website with homepage, services, gallery, team, about, contact, offers, and reviews
-- Appointment booking flow with scheduling logic and overlap protection
-- Admin dashboard for salon operations and management overview
-- Prisma schema for salons, staff, customers, services, appointments, and payments
-- Demo seed data for a fictional salon brand
-- Virtual try-on prototype page for hairstyle previews
-- Environment-based configuration for local development
+- Editorial public salon site with services, gallery, team, booking, contact, and booking lookup routes.
+- Supabase-backed services, staff, customers, appointments, payments, gallery, messages, and settings.
+- Structured mock fallback when Supabase variables are absent, so local UI evaluation does not crash.
+- Protected admin workspace with dashboard, appointments, services, staff, customers, analytics, messages, and settings views.
+- Server-side validation for booking and contact submissions.
 
 ## Local setup
 
 ```bash
-cd "C:\Users\Lenovo\AppData\Roaming\Code\User\globalStorage\github.remotehub\4b79873068f35b504215ae931a3a08d1\changestore\vscode-vfs-github\guptabhavyabt24ele-blip\velora-salon"
 npm install
 copy .env.example .env.local
-npm run db:generate
-npm run db:push
-npm run db:seed
 npm run dev
 ```
 
-## Required environment variables
+Open `http://localhost:3000`.
 
-Use `.env.local` with at least:
+## Supabase setup
 
-```bash
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/velora_salon?schema=public"
-ADMIN_EMAIL=admin@velora.example
-ADMIN_PASSWORD=change-me-in-production
-NEXTAUTH_SECRET=replace-with-strong-secret
-```
+1. Create a Supabase project.
+2. Copy `.env.example` to `.env.local`.
+3. Set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+4. Set `SUPABASE_SERVICE_ROLE_KEY` only on the server. Never expose it with `NEXT_PUBLIC_`.
+5. Run `supabase/schema.sql` in Supabase SQL Editor, then run `supabase/seed.sql`.
 
-## Database notes
+With Supabase variables absent, public reads use the structured Velora demo data. Writes return a safe demo response and do not claim database persistence.
 
-The project uses PostgreSQL via Prisma. For local development, create a Postgres database and point `DATABASE_URL` at it before running the Prisma commands.
+## Admin access
+
+Set `ADMIN_EMAIL`, `ADMIN_PASSWORD`, and a strong `NEXTAUTH_SECRET` in `.env.local`. A bcrypt password hash is recommended for production. Admin routes redirect unauthenticated visitors to `/admin/login`.
 
 ## Useful commands
 
@@ -48,29 +40,18 @@ The project uses PostgreSQL via Prisma. For local development, create a Postgres
 npm run dev
 npm run test
 npm run typecheck
-npm run build
 npm run lint
-npm run db:generate
-npm run db:push
-npm run db:migrate
-npm run db:seed
+npm run build
 ```
 
-## Demo admin access
+## Routes
 
-Demo credentials are stored in `.env.example` and are intended for local development only. Change them before deployment.
+Public: `/`, `/services`, `/services/[slug]`, `/gallery`, `/team`, `/about`, `/offers`, `/reviews`, `/contact`, `/book`, `/booking/lookup`, `/booking/confirmation`.
 
-## Demo content
+APIs: `/api/services`, `/api/book`, `/api/bookings`, `/api/contact`, `/api/auth/[...nextauth]`.
 
-The app ships with a fictional salon demo named VELORA and sample services, gallery content, staff profiles, and appointment data.
+Admin: `/admin`, `/admin/appointments`, `/admin/services`, `/admin/staff`, `/admin/customers`, `/admin/analytics`, `/admin/messages`, `/admin/settings`, `/admin/login`.
 
-## Current limitations
+## Visual system
 
-- Real payment, email, SMS, and WhatsApp integrations are not configured by default.
-- Authentication is scaffolding for local demonstration and should be expanded for production use.
-- A production-grade multi-tenant access layer and advanced CRM automation can be layered on top of this foundation.
-- The virtual try-on experience is a browser-first prototype and does not perform real AI hair segmentation without an external provider.
-
-## Production readiness
-
-This project is suitable as a polished local demo and a strong foundation for a real salon SaaS product, but it still needs production configuration for authentication, payments, email, notification channels, and managed PostgreSQL hosting.
+Public surfaces retain the Velora palette: bone `#F8F6F0`, ink `#1A1918`, warm stone `#E5E0D8`, and champagne `#B89A67`. Public layouts retain the fixed navbar, Lenis smooth scrolling, grain overlay, and `pt-28` to `pt-36` shell clearance. Admin uses a separate charcoal atelier shell.

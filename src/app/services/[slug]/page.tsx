@@ -1,9 +1,10 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import { services } from '@/lib/data';
+import { getPublicServices } from '@/app/api/_lib/supabase';
 
-export default function ServiceDetailPage({ params }: { params: { slug: string } }) {
+export default async function ServiceDetailPage({ params }: { params: { slug: string } }) {
+  const services = await getPublicServices();
   const service = services.find((item) => item.slug === params.slug);
 
   if (!service) {

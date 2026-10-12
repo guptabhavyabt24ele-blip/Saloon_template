@@ -1,7 +1,8 @@
 import Link from 'next/link';
-import { services } from '@/lib/data';
+import { getPublicServices } from '@/app/api/_lib/supabase';
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const services = await getPublicServices();
   return (
     <main className="page-shell">
       <div className="mb-10">
